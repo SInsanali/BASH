@@ -29,9 +29,14 @@ if mountpoint -q /media; then
     mv ${backup_location}/* ${backup_destination}/
 
     echo -e "\033[32m\n$file_name moved successfully.\033[0m"
+
+    #unmount drive 
+    umount /media
+    echo -e "\033[32m\n$partition_name umounted successfully.\033[0m"
+
 else
     echo -e "\033[32m\nFailed to mount the device. Please check the partition name and try again.\033[0m"
 fi
 
 # Completion message
-echo -e "\033[32m\nOperation completed.\033[0m"
+echo -e "\033[32m\nFile transfer operation completed.\033[0m"

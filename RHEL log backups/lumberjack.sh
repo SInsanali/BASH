@@ -13,12 +13,17 @@ backup_dir="/opt/logbackup"
 # Logs to be archived
 log_files="audit secure* messages* cron* boot*"
 
-# Get current year and month
+# Get current year and month (and day if needed)
 current_year=$(date +%Y)
 current_month=$(date +%m)
+#current_day=$(date +%d)
+#remove the "#" if the day is needed in the file name of the backup
 
 # Construct the filename for the tar archive
 archive_name="${servername}_${labname}_${current_year}-${current_month}.tar.gz"
+#archive_name="${servername}_${labname}_${current_year}-${current_month}-${current_day}.tar.gz" 
+#remove the "#" if the day is needed in the file name of the backup AND comment out the other archive_name variable
+
 
 # Move to the /var/log directory to start the archival process
 cd /var/log
@@ -40,12 +45,15 @@ echo -e "\033[32m\n\nYour file is named ${archive_name} and is stored here: ${ba
 
 # Add the cron job without duplicating
 if [ ! "$(grep lumberjack.sh /var/spool/cron/root)" ]; then
+	#this sets the job run at midnight on the 15th of each month
+	#cron job can be modified if backups are needed on a different interval
 	echo "0 0 15 * * /usr/local/bin/lumberjack.sh" >> /var/spool/cron/root
 fi
 
 # Output the completion message in green
 echo -e "\nAll good here, heading out\033[0m\n"
 
-# To remove Windows carriage returns
+# In the case of the script not running:
+# to remove Windows carriage returns
 # use this command: 
 # sed -i -e 's/\r$//' /path/to/lumberjack.sh
