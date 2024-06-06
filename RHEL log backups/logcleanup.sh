@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # The Log Clean Up Script is used to mount a device and move backup files to the mounted device on Red Hat Enterprise Linux Systems
+# Scripted to work in conjunction with the Lumberjack script
 # Created by Sam Insanali
 
 # Define the backup source directory by extracting it from the crontab
