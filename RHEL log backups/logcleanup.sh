@@ -3,8 +3,16 @@
 # The Log Clean Up Script is used to mount a device and move backup files to the mounted device on Red Hat Enterprise Linux Systems
 # Created by Sam Insanali
 
-# Define the backup source directory
-backup_location="/opt/logbackup"
+# Define the backup source directory by extracting it from the crontab
+cron_job="/usr/local/bin/lumberjack.sh"
+backup_location=$(crontab -l | grep "$cron_job" | awk -F' ' '{print $7}')
+
+# Ensure backup_location is set
+if [ -z "$backup_location" ]; then
+  echo -e "\033[31m\nError: Could not determine the backup location from the crontab.\033[0m"
+  exit 1
+fi
+
 file_name=$(ls $backup_location)
 
 # Define the mount point for the removable media
@@ -30,12 +38,12 @@ if mountpoint -q /media; then
 
     echo -e "\033[32m\n$file_name moved successfully.\033[0m"
 
-    #unmount drive 
+    # Unmount drive 
     umount /media
-    echo -e "\033[32m\n$partition_name umounted successfully.\033[0m"
+    echo -e "\033[32m\n$partition_name unmounted successfully.\033[0m"
 
 else
-    echo -e "\033[32m\nFailed to mount the device. Please check the partition name and try again.\033[0m"
+    echo -e "\033[31m\nFailed to mount the device. Please check the partition name and try again.\033[0m"
 fi
 
 # Completion message
