@@ -3,12 +3,34 @@
 # Lumberjack Script: Automates the backup of specific log files in RHEL devices
 # Created by Sam Insanali
 
+# Configuration file path
+config_file="/usr/local/bin/config_lumberjack"
+
 # Default variables
 default_servername="server_name"
 default_labname="example_lab"
 default_backup_dir="/opt/logbackup"
 log_files="audit secure* messages* cron* boot*"
 cron_job="/usr/local/bin/lumberjack.sh"
+
+# Function to load configuration from file
+load_config() {
+  if [ -f "$config_file" ]; then
+    source "$config_file"
+  else
+    # If the config file does not exist, use default values
+    servername="$default_servername"
+    labname="$default_labname"
+    backup_dir="$default_backup_dir"
+  fi
+}
+
+# Function to save configuration to file
+save_config() {
+  echo "servername=$servername" > "$config_file"
+  echo "labname=$labname" >> "$config_file"
+  echo "backup_dir=$backup_dir" >> "$config_file"
+}
 
 # Function to prompt and validate input
 prompt_input() {
@@ -50,7 +72,7 @@ prompt_backup_dir() {
 prompt_names() {
   local valid_names=0
   while [ $valid_names -eq 0 ]; do
-    echo -e "\033[32mThe backup file will be formatted like this: \033[0m\033[32m_\033[31mservername\033[32m_\033[31mlabname\033[32m_YYYY-MM.tar.gz\033[0m"
+    echo -e "\033[32mThe backup file will be formatted like this: \033[32m\033[31mserver_name\033[32m_\033[31mlab_name\033[32m_YYYY-MM.tar.gz\033[0m"
     echo -e "\033[32mEnter the server name [\033[31mserver_name\033[32m]: \033[0m"
     read -r servername
     servername=${servername:-$default_servername}
@@ -73,28 +95,29 @@ prompt_names() {
   done
 }
 
+# Load configuration
+load_config
+
 # Check if the cron job exists
 if crontab -l | grep -q "$cron_job"; then
-  # If the cron job exists, read the backup directory from the cron job
-  backup_dir=$(crontab -l | grep "$cron_job" | awk -F' ' '{print $7}' | sed 's,/usr/local/bin/lumberjack.sh,,')
-  # Read the server name and lab name from the script
-  servername=$(grep -E '^servername=' /usr/local/bin/lumberjack.sh | cut -d '=' -f 2)
-  labname=$(grep -E '^labname=' /usr/local/bin/lumberjack.sh | cut -d '=' -f 2)
+  # If the cron job exists, use the loaded configuration
+  :
 else
   # If the cron job does not exist, prompt the user for input
   prompt_names
   prompt_backup_dir
+  save_config
 fi
 
 # Get current year and month (and day if needed)
 current_year=$(date +%Y)
 current_month=$(date +%m)
-#current_day=$(date +%d)
+current_day=$(date +%d)
 #remove the "#" if the day is needed in the file name of the backup
 
 # Construct the filename for the tar archive
-archive_name="${servername}_${labname}_${current_year}-${current_month}.tar.gz"
-#archive_name="${servername}_${labname}_${current_year}-${current-month}-${current-day}.tar.gz" 
+#archive_name="${servername}_${labname}_${current_year}-${current_month}.tar.gz"
+archive_name="${servername}_${labname}_${current_year}-${current_month}-${current_day}.tar.gz" 
 #remove the "#" if the day is needed in the file name of the backup AND comment out the other archive_name variable
 
 # Move to the /var/log directory to start the archival process
