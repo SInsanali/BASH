@@ -17,6 +17,15 @@ fi
 file_name=$(ls $backup_location)
 
 # Define the mount point for the removable media
+#TODO have the backup location be read by the script
+  #backup location will be set by lumberjack
+  #Add user prompt to confirm the backup location
+  #if location correct:
+    #continue
+  #else:
+    #prompt user for backup location
+    #confirm with user
+    #loop back to user prompt to confirm the backup location
 backup_destination="/media/logbackups"
 
 echo -e "\033[32m\nAvailable block devices:\033[0m"
