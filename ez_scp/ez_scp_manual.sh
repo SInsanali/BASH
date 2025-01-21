@@ -33,6 +33,7 @@ read -p "Enter the destination path on the remote systems: " remote_path
 
 # Define the list of remote IP addresses
 declare -a remote_ips=(
+    # input your IP addresses or hostnames below
     "192.168.1.1"
     "192.168.1.2"
     "192.168.1.3"
