@@ -1,7 +1,16 @@
-#!/bin/bash
-
-# System Information Collector Script: Automates collection of critical system information on RHEL devices
+##################################################################################################
+##################################################################################################
 # Created by Sam Insanali
+# GitHub: https://github.com/SInsanali
+##################################################################################################
+##################################################################################################
+# Description:
+# System Information Collector Script: Automates collection of critical system information on RHEL devices
+
+##################################################################################################
+##################################################################################################
+
+#!/bin/bash
 
 # Configuration
 homedir="/home/$(whoami)"
