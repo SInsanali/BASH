@@ -17,6 +17,9 @@ homedir="/home/$(whoami)"
 output_dir="System_Info_Collection"
 hostname="$(hostname)"
 
+# Check OS Version
+os_version=$(grep -oE '[0-9]+' /etc/redhat-release | head -1)
+
 # Function to collect system information
 collect_info() {
   local temp_dir="$homedir/$output_dir"
@@ -43,19 +46,31 @@ collect_info() {
   echo ""
 
   echo -e "\033[37m[ - ] Starting Running Processes Collection\033[0m"
-  ps -aux > "$temp_dir/${hostname}_processes.txt"
+  if [[ $os_version -ge 7 ]]; then
+    ps -aux > "$temp_dir/${hostname}_processes.txt"
+  else
+    ps aux > "$temp_dir/${hostname}_processes.txt"
+  fi
   echo -e "\033[32m[ + ] Completed Running Processes Collection\033[0m"
 
   echo ""
 
   echo -e "\033[37m[ - ] Starting Services Collection\033[0m"
-  systemctl list-unit-files --type=service > "$temp_dir/${hostname}_services.txt"
+  if [[ $os_version -ge 7 ]]; then
+    systemctl list-unit-files --type=service > "$temp_dir/${hostname}_services.txt"
+  else
+    service --status-all > "$temp_dir/${hostname}_services.txt"
+  fi
   echo -e "\033[32m[ + ] Completed Services Collection\033[0m"
 
   echo ""
 
   echo -e "\033[37m[ - ] Starting Network Adapter Information Collection\033[0m"
-  ip addr show > "$temp_dir/${hostname}_network_adapters.txt"
+  if [[ $os_version -ge 7 ]]; then
+    ip addr show > "$temp_dir/${hostname}_network_adapters.txt"
+  else
+    ifconfig -a > "$temp_dir/${hostname}_network_adapters.txt"
+  fi
   echo -e "\033[32m[ + ] Completed Network Adapter Information Collection\033[0m"
 
   echo ""
