@@ -7,6 +7,10 @@
 # Description:
 # System Information Collector Script: Automates collection of critical system information on RHEL devices
 
+
+#TO REMOVE WINDOWS CARRIAGE RETURNS USE THIS:
+#sed -i 's/\r$//' enumerate_system.sh
+
 ##################################################################################################
 ##################################################################################################
 
