@@ -19,8 +19,11 @@ for dir in /home/*/.ssh; do
     fi
 done
 
+# Add report header with hostname
+echo "Report for $(hostname)\n" > "$output_file"
+
 # Sort by file type (everything after the colon)
-sort -t: -k2 "$temp_file" > "$output_file"
+sort -t: -k2 "$temp_file" >> "$output_file"
 
 # Clean up
 rm "$temp_file"
